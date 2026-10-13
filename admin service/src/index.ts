@@ -7,6 +7,7 @@ import express from "express"
 import { sql } from "./config/db.js"
 import adminRoutes from "./routes.js"
 import cloudinary from "cloudinary"
+import cors from "cors"
 
 import redis from "redis"
 
@@ -31,6 +32,7 @@ cloudinary.v2.config({
 
 const app=express()
 
+app.use(cors())
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));

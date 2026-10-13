@@ -6,9 +6,10 @@ dotenv.config({
 import express from "express"
 import mongoose, { mongo } from "mongoose"
 import userRouter from "./route.js"
-
+import cors from "cors"
 
 const app=express()
+app.use(cors())
 
 const connectDb=async()=>{
     try {

@@ -6,6 +6,7 @@ import express from "express";
 import { sql } from "./config/db.js";
 import adminRoutes from "./routes.js";
 import cloudinary from "cloudinary";
+import cors from "cors";
 import redis from "redis";
 export const redisClient = redis.createClient({
     password: process.env.REDIS_PASSWORD,
@@ -21,6 +22,7 @@ cloudinary.v2.config({
     api_secret: process.env.CLOUD_API_SECRET,
 });
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 async function initDB() {

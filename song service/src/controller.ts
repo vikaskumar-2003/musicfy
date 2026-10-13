@@ -8,9 +8,17 @@ export const getAllAlbum=TryCatch(async(req,res)=>{
   let albums;
    const CACHE_EXPIRY=1800
 
+  
+ 
+
+
+
    if(redisClient.isReady){
     albums=await redisClient.get("albums")
    }
+
+   
+   
 
    if(albums){
     console.log("cache hit");
@@ -27,6 +35,8 @@ export const getAllAlbum=TryCatch(async(req,res)=>{
         })
     }
 
+    console.log("albums",albums);
+    
 
    res.json(albums)
    }
@@ -57,7 +67,7 @@ export const getAllsongs=TryCatch(async(req,res)=>{
       songs=await sql`SELECT * FROM songs`
 
     if(redisClient.isReady){
-        await redisClient.set("albums",JSON.stringify(songs),{
+        await redisClient.set("songs",JSON.stringify(songs),{
             EX:CACHE_EXPIRY
         })
     }
@@ -119,8 +129,28 @@ export const getAllSongsOfAlbum=TryCatch(async(req,res)=>{
 
 export const getSingleSong=TryCatch(async(req,res)=>{
 
-const song=await sql`SELECT * FROM song WHERE id=${req.params.id}`
-   
-res.json(song[0])
+    try {
+        const song = await sql`
+            SELECT * FROM songs WHERE id = ${req.params.id}
+        `;
+
+        console.log("After SQL query");
+        console.log("Song result:", song);
+
+        if (song.length === 0) {
+            return res.status(404).json({
+                message: "Song not found",
+            });
+        }
+
+        return res.status(200).json(song[0]);
+
+    } catch (error) {
+        console.error("SQL query failed:", error);
+
+        return res.status(500).json({
+            message: "SQL query failed",
+        });
+    }
 
 })

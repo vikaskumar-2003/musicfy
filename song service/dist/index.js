@@ -5,6 +5,7 @@ dotenv.config({
 import express from "express";
 import songRoutes from "./route.js";
 import redis from "redis";
+import cors from "cors";
 export const redisClient = redis.createClient({
     password: process.env.REDIS_PASSWORD,
     socket: {
@@ -14,6 +15,7 @@ export const redisClient = redis.createClient({
 });
 redisClient.connect().then(() => console.log("connected to redis")).catch(console.error);
 const app = express();
+app.use(cors());
 const PORT = process.env.PORT;
 app.use("/api/v1", songRoutes);
 app.listen(PORT, () => {
