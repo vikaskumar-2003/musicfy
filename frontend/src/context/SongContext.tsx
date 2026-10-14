@@ -38,6 +38,12 @@ interface SongContextType {
   fetchSingleSong: () => Promise<void>;
   nextSong: () => void;
   prevSong: () => void;
+  albumSong:Song[];
+  albumData:Album|null;
+  fetchAlbumsongs:(id:string)=>Promise<void>;
+  fetchSongs:()=>Promise<void>;
+   fetchAlbums:()=>Promise<void>;
+
 }
 
 const SongContext = createContext<SongContextType | undefined>(undefined);
@@ -121,6 +127,27 @@ export const SongProvider: React.FC<SongProvideProps> = ({ children }) => {
     }
   }, [index, songs]);
 
+  const[albumSong,setAlbumSong]=useState<Song[]>([])
+  const[albumData,setAlbumData]=useState<Album|null>(null)
+
+  const fetchAlbumsongs=useCallback(async(id:string)=>{
+ 
+    setLoading(true)
+    try {
+      const{data}=await axios.get<{songs:Song[]; album:Album}>(`${server}/api/v1/album/${id}`)
+      setAlbumData(data.album)
+      setAlbumSong(data.songs)
+    } catch (error) {
+      console.log(error);
+      
+    }
+    finally{
+      setLoading(false)
+    }
+  
+
+  },[])
+
   useEffect(() => {
     fetchSongs();
     fetchAlbums();
@@ -140,6 +167,11 @@ export const SongProvider: React.FC<SongProvideProps> = ({ children }) => {
         song,
         nextSong,
         prevSong,
+        albumData,albumSong,
+        fetchAlbumsongs,
+        fetchSongs,
+        fetchAlbums
+
       }}
     >
       {children}

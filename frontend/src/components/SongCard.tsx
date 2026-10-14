@@ -1,6 +1,7 @@
 import React from "react";
 import { FaBookmark, FaPlay } from "react-icons/fa";
 import { useUserData } from "../context/UserContext";
+import { useSongData } from "../context/SongContext";
 
 interface SongCardProps {
   image: string;
@@ -11,7 +12,9 @@ interface SongCardProps {
 
 const SongCard: React.FC<SongCardProps> = ({ image, name, desc, id }) => {
 
-  const{addToPlaylist,user}=useUserData()
+  const{addToPlaylist,isAuth}=useUserData()
+
+   const{setSelectedSong,setIsPlaying}=useSongData()
 
   const saveToPlayListHandler=()=>{
     addToPlaylist(id)
@@ -22,13 +25,13 @@ const SongCard: React.FC<SongCardProps> = ({ image, name, desc, id }) => {
       <div className="relative group">
         <img src={image} className="mr-1 w-[160px] rounded" alt={name} />
         <div className="flex gap-2">
-          <button className="absolute bottom-2 right-14 bg-red-600 text-black p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 ">
+          <button className="absolute bottom-2 right-14 bg-red-600 text-black p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 " onClick={()=>{setSelectedSong(id) ,setIsPlaying(true)}} >
             <FaPlay />
           </button>
 
-          <button className="absolute bottom-2 right-2 bg-red-600 text-black p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 " onClick={saveToPlayListHandler}>
+         {isAuth&&<button className="absolute bottom-2 right-2 bg-red-600 text-black p-3 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 " onClick={saveToPlayListHandler}>
             <FaBookmark />
-          </button>
+          </button>}
         </div>
       </div>
 
